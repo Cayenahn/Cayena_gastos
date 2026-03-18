@@ -552,8 +552,7 @@ body{overflow-x:hidden}
             <div class="upload-title">Subir imagen de factura</div>
             <div class="upload-sub">Arrastra aquí o toca para seleccionar<br>JPG, PNG, PDF · Máx 10 MB</div>
             <div class="upload-actions" onclick="event.stopPropagation()">
-              <button class="btn" onclick="document.getElementById('file-input').click()">Elegir archivo</button>
-              <button class="btn btn-ai" onclick="startCamera()">📷 Usar cámara</button>
+              <button class="btn btn-ai" onclick="document.getElementById('file-input').click()">Elegir archivo o PDF</button>
             </div>
           </div>
 
@@ -641,13 +640,7 @@ body{overflow-x:hidden}
 
 <div class="toast" id="toast"></div>
 
-<!-- HIDDEN VIDEO for camera -->
-<video id="cam-video" style="display:none;position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:500;background:#000" autoplay playsinline></video>
-<canvas id="cam-canvas" style="display:none"></canvas>
-<div id="cam-overlay" style="display:none;position:fixed;inset:0;z-index:501;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:32px;gap:14px">
-  <button onclick="capturePhoto()" style="width:70px;height:70px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.5);cursor:pointer;font-size:28px">📷</button>
-  <button onclick="stopCamera()" style="background:rgba(0,0,0,.6);color:#fff;border:none;padding:10px 24px;border-radius:999px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer">Cancelar</button>
-</div>
+
 
 <script>
 // ══════════════════════════════════
@@ -720,7 +713,6 @@ let records = JSON.parse(localStorage.getItem('cayena_compras') || '[]');
 let selDate = null, calY, calM;
 let rowCount = 0;
 let aiPendingData = null;
-let camStream = null;
 
 const el = id => document.getElementById(id);
 const Lf = n => 'L ' + parseFloat(n||0).toLocaleString('es-HN', {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -1177,34 +1169,6 @@ function resetScan() {
   aiPendingData=null;
 }
 
-// ── CAMERA ──
-async function startCamera() {
-  try {
-    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-    el('cam-video').srcObject = camStream;
-    el('cam-video').style.display='block';
-    el('cam-overlay').style.display='flex';
-  } catch(e) {
-    showToast('No se pudo acceder a la cámara','err');
-  }
-}
-function capturePhoto() {
-  const vid = el('cam-video');
-  const canvas = el('cam-canvas');
-  canvas.width=vid.videoWidth; canvas.height=vid.videoHeight;
-  canvas.getContext('2d').drawImage(vid,0,0);
-  const dataURL = canvas.toDataURL('image/jpeg',0.9);
-  stopCamera();
-  el('scan-preview').classList.add('show');
-  el('preview-img').src=dataURL;
-  el('upload-zone').style.display='none';
-  processWithAI(dataURL,'image/jpeg');
-}
-function stopCamera() {
-  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
-  el('cam-video').style.display='none';
-  el('cam-overlay').style.display='none';
-}
 
 // ── EXPORT ──
 function exportCSV() {
