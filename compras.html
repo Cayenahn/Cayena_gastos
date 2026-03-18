@@ -284,6 +284,7 @@ body{overflow-x:hidden}
       <a class="ni" href="ingresos.html"><svg viewBox="0 0 16 16" fill="none"><path d="M2 12L5.5 7.5L8.5 10L11 5.5L14 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Ingresos</a>
       <a class="ni" href="isv.html"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Resumen ISV</a>
       <a class="ni active" href="compras.html"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 3V2M11 3V2M2 7h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Compras</a>
+      <a class="ni" href="proveedores.html"><svg viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M2 13c0-2.21 1.79-4 4-4s4 1.79 4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M11 7l1.5 1.5L15 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Proveedores</a>
       <a class="ni" href="#"><svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="8.5" y="2" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="2" y="8.5" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1" stroke="currentColor" stroke-width="1.4"/></svg>Inventario</a>
       <a class="ni" href="#"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Gastos</a>
       <div class="ng">Personas</div>
@@ -370,25 +371,12 @@ body{overflow-x:hidden}
                 </div>
               </div>
               <div class="field">
-                <label>Proveedor</label>
-                <select id="f-proveedor">
-                  <option value="">— Seleccionar proveedor —</option>
-                  <option>Del Corral</option>
-                  <option>Cargill</option>
-                  <option>Zaragoza</option>
-                  <option>Zamorano</option>
-                  <option>Boqueron</option>
-                  <option>Melo / MS (Milk Solutions)</option>
-                  <option>Best Choice</option>
-                  <option>Canada Dry</option>
-                  <option>Coca-Cola</option>
-                  <option>Heinz</option>
-                  <option>La Costena</option>
-                  <option>Tajin</option>
-                  <option>Voy Sigua</option>
-                  <option>Mercado / Varios</option>
-                  <option>Otro proveedor</option>
-                </select>
+                <label>Proveedor <span style="font-size:10px;color:var(--muted);font-weight:400">— escribe para agregar nuevo</span></label>
+                <div style="position:relative">
+                  <input type="text" id="f-proveedor" list="proveedores-list" placeholder="Escribe o selecciona un proveedor..." autocomplete="off" style="width:100%;font-family:var(--font);font-size:14px;font-weight:500;color:var(--text);background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);padding:10px 40px 10px 14px;outline:none;transition:all .15s" onfocus="this.style.borderColor='var(--blue)';this.style.background='var(--white)';this.style.boxShadow='0 0 0 3px rgba(37,99,235,.1)'" onblur="this.style.borderColor='var(--border)';this.style.background='var(--bg)';this.style.boxShadow='none'">
+                  <datalist id="proveedores-list"></datalist>
+                  <button onclick="deleteProveedorInput()" title="Limpiar" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:2px 4px">×</button>
+                </div>
               </div>
             </div>
             <div class="form-row form-row-2">
@@ -537,87 +525,49 @@ body{overflow-x:hidden}
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 7V4a1 1 0 011-1h3M17 7V4a1 1 0 00-1-1h-3M3 13v3a1 1 0 001 1h3M17 13v3a1 1 0 01-1 1h-3" stroke="white" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="10" r="3" stroke="white" stroke-width="1.6"/></svg>
                 Escanear Factura con IA
               </div>
-              <div class="ai-panel-sub">Toma una foto o sube una imagen de tu factura — la IA extrae los productos automáticamente</div>
+              <div class="ai-panel-sub">Extracción automática de productos desde una foto o PDF de factura</div>
             </div>
             <div class="ai-badge">✦ CLAUDE AI</div>
           </div>
 
-          <!-- Upload zone -->
-          <div class="upload-zone" id="upload-zone" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
-            <input type="file" accept="image/*,application/pdf" id="file-input" onchange="handleFile(this.files[0])">
-            <div class="upload-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M7 9l5-5 5 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+          <!-- STANDBY -->
+          <div style="padding:48px 32px;text-align:center">
+            <div style="width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,#F3F0FF,#EFF6FF);border:1.5px solid #DDD6FE;display:flex;align-items:center;justify-content:center;margin:0 auto 18px">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="10" stroke="#7C3AED" stroke-width="1.6" stroke-dasharray="4 3"/><path d="M14 9v6M14 17.5v.5" stroke="#7C3AED" stroke-width="1.8" stroke-linecap="round"/></svg>
             </div>
-            <div class="upload-title">Subir imagen de factura</div>
-            <div class="upload-sub">Arrastra aquí o toca para seleccionar<br>JPG, PNG, PDF · Máx 10 MB</div>
-            <div class="upload-actions" onclick="event.stopPropagation()">
-              <button class="btn" onclick="document.getElementById('file-input').click()">Elegir archivo</button>
-              <button class="btn btn-ai" onclick="startCamera()">📷 Usar cámara</button>
+            <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">Función en standby</div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.7;max-width:340px;margin:0 auto">
+              El escaneo con IA requiere configurar una <strong>API Key de Anthropic</strong>.<br>
+              Cuando estés listo, actívalo en minutos.
             </div>
-          </div>
-
-          <!-- Preview -->
-          <div class="scan-preview" id="scan-preview">
-            <img id="preview-img" src="" alt="Factura">
-          </div>
-
-          <!-- Processing -->
-          <div class="ai-processing" id="ai-processing">
-            <div class="ai-spinner"></div>
-            <div style="font-size:14px;font-weight:600;color:var(--text)">Analizando factura...</div>
-            <div class="ai-step" id="ai-step">Extrayendo texto de la imagen</div>
-          </div>
-
-          <!-- Result -->
-          <div class="ai-result" id="ai-result">
-            <div class="ai-result-head">
-              <div class="ai-result-title">Productos detectados</div>
-              <span class="ai-confidence" id="ai-confidence">Alta confianza</span>
+            <div style="margin-top:24px;display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;padding:8px 18px;border-radius:999px;background:#F5F3FF;color:#7C3AED;border:1px solid #DDD6FE">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#7C3AED" stroke-width="1.2"/><path d="M6 4v3M6 8.5v.3" stroke="#7C3AED" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Pendiente de configuración
             </div>
-            <div class="ai-info-grid">
-              <div class="ai-info-box">
-                <div class="ai-info-lbl">Proveedor detectado</div>
-                <div class="ai-info-val" id="ai-proveedor">—</div>
-              </div>
-              <div class="ai-info-box">
-                <div class="ai-info-lbl">Total de factura</div>
-                <div class="ai-info-val" style="color:var(--blue)" id="ai-total-det">L 0.00</div>
-              </div>
-            </div>
-            <div class="ai-items" id="ai-items"></div>
-            <button class="ai-accept-btn" onclick="acceptAIResult()">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5 7-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Aceptar y agregar al registro
-            </button>
-            <button class="btn" style="width:100%;margin-top:8px" onclick="resetScan()">Escanear otra factura</button>
           </div>
         </div>
 
-        <!-- ISV Note -->
+        <!-- What it will do -->
         <div class="card">
           <div class="card-head">
             <div class="card-title">
-              <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="var(--blue)" stroke-width="1.3"/><path d="M8 7v5M8 5.5v.3" stroke="var(--blue)" stroke-width="1.4" stroke-linecap="round"/></svg>
-              ¿Cómo clasifica la IA el ISV?
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 13L5 9l3 2.5L11 5l3 4" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Cuando se active, podrás...
             </div>
           </div>
-          <div class="card-body">
-            <p style="font-size:13px;color:var(--body);line-height:1.7;margin-bottom:12px">La IA analiza cada producto de la factura y lo clasifica automáticamente según la Ley del ISV de Honduras:</p>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-              <div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:var(--r);padding:12px">
-                <div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:6px">GRAVADO 15%</div>
-                <div style="font-size:11px;color:var(--body);line-height:1.7">Bebidas, empaques, productos procesados, salsas, limpieza</div>
-              </div>
-              <div style="background:var(--red-soft);border:1px solid #FECACA;border-radius:var(--r);padding:12px">
-                <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:6px">GRAVADO 18%</div>
-                <div style="font-size:11px;color:var(--body);line-height:1.7">Alcohol, licores, cigarros (Vodka, Ron, Gin, Tequila...)</div>
-              </div>
-              <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:var(--r);padding:12px">
-                <div style="font-size:11px;font-weight:700;color:var(--green-ui);margin-bottom:6px">EXENTO</div>
-                <div style="font-size:11px;color:var(--body);line-height:1.7">Carnes frescas, huevos, frutas, verduras, lácteos, granos</div>
-              </div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg);border-radius:var(--r);border:1px solid var(--border)">
+              <span style="font-size:20px">📷</span>
+              <div><div style="font-size:13px;font-weight:600;color:var(--text)">Tomar foto desde el teléfono</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Apunta la cámara a la factura y la IA extrae todo automáticamente</div></div>
             </div>
-            <p style="font-size:11px;color:var(--muted);margin-top:12px">⚠️ Siempre revisa la clasificación antes de aceptar. La IA puede cometer errores en productos con ISV especial.</p>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg);border-radius:var(--r);border:1px solid var(--border)">
+              <span style="font-size:20px">📄</span>
+              <div><div style="font-size:13px;font-weight:600;color:var(--text)">Subir PDF o imagen desde computadora</div><div style="font-size:11px;color:var(--muted);margin-top:2px">JPG, PNG o PDF — detecta productos, cantidades, precios y proveedor</div></div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg);border-radius:var(--r);border:1px solid var(--border)">
+              <span style="font-size:20px">🏷️</span>
+              <div><div style="font-size:13px;font-weight:600;color:var(--text)">Clasificación ISV automática</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Cada producto se clasifica en Exento, 15% o 18% según la ley hondureña</div></div>
+            </div>
           </div>
         </div>
       </div>
@@ -640,13 +590,7 @@ body{overflow-x:hidden}
 
 <div class="toast" id="toast"></div>
 
-<!-- HIDDEN VIDEO for camera -->
-<video id="cam-video" style="display:none;position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:500;background:#000" autoplay playsinline></video>
-<canvas id="cam-canvas" style="display:none"></canvas>
-<div id="cam-overlay" style="display:none;position:fixed;inset:0;z-index:501;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:32px;gap:14px">
-  <button onclick="capturePhoto()" style="width:70px;height:70px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,.5);cursor:pointer;font-size:28px">📷</button>
-  <button onclick="stopCamera()" style="background:rgba(0,0,0,.6);color:#fff;border:none;padding:10px 24px;border-radius:999px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer">Cancelar</button>
-</div>
+
 
 <script>
 // ══════════════════════════════════
@@ -712,14 +656,148 @@ const ALL_PRODUCTS = Object.entries(CATALOG).flatMap(([cat, d]) =>
 const ISV_DEFAULTS = {};
 ALL_PRODUCTS.forEach(p => { ISV_DEFAULTS[p.name] = p.isv; });
 
+// ── CATALOG PRICES (from Excel column S formulas) ──
+const CATALOG_PRICES = {
+  'Ace Bolsa 10kg': 434.95,
+  'Aceite 20 Libras': 680.0,
+  'Adobo sin Pimienta': 183.77,
+  'Agua Dasani (Fardo de 12)': 130.0,
+  'Aguacates Unidad': 13.0,
+  'Ajo y Buffalo': 411.5,
+  'Alas de pollo (Libra)': 66.0,
+  'Arandanos Congelados': 294.95,
+  'Azistin Lysol': 399.95,
+  'Azucar': 464.95,
+  'Bacon Bites': 188.26,
+  'Bacon Zaragoza': 199.95,
+  'Barbacoa Best Choice': 157.0,
+  'Barton Triple Sec 750ml': 66.5,
+  'Blue Cheese': 784.99,
+  'Bolsa Blanca Liston Naranja': 599.95,
+  'Bolsa Café No 10 (Fardo)': 392.0,
+  'Bolsa Camiseta 12" (Thank you)': 37.95,
+  'Bolsa Camiseta No2 Blanca': 34.38,
+  'Bolsa Transparente 7*14 (9000u)': 2740.45,
+  'Bolsas negras 50 Litros': 479.95,
+  'Botellon con agua': 25.0,
+  'Café': 38.9,
+  'Caja Papas Fritas (Fardo 100)': 172.5,
+  'Canada-Dry Ginger Ale (Fardo de 24)': 400.0,
+  'Canada-Dry Quina (Fardo de 24)': 400.0,
+  'Canada-Dry Soda (Fardo de 24)': 400.0,
+  'Canela': 194.95,
+  'Carne Molida Regular Del Corral': 62.5,
+  'Carne Molida de Pollo': 42.5,
+  'Carton de Huevos (30 unidades)': 109.95,
+  'Cayenne Franks Redhot': 545.0,
+  'Cebolla Amarilla (Libra)': 20.0,
+  'Cebolla Roja (Libra)': 30.0,
+  'Cerezas Rojas Diamante': 759.0,
+  'Chamoi Tajin (475ml)': 76.82,
+  'Chipotle la Costena': 50.14,
+  'Chorizo Molido Baleada Del Corral': 66.5,
+  'Chorizo Zamorano': 204.95,
+  'Cocacola Lata (Fardo de 12)': 200.0,
+  'Cocacola Zero (Fardo de 12)': 180.0,
+  'Consome de Pollo': 128.8,
+  'Contenedor Negro 6*6 (Fardo 50)': 86.83,
+  'Contenedor Negro 8*8 (Fardo 50)': 120.75,
+  'Contenedor Negro 9*9 (Fardo 50)': 138.86,
+  'Copa Plastica 2 Oz Tapa (Fardo 2500)': 1173.0,
+  'Crema de Coco JAJA': 61.7,
+  'Dailys Margarita 750ml': 142.13,
+  'Fresas Congeladas (5 Libras)': 200.0,
+  'Fresca Toronja (Fardo de 12)': 220.0,
+  'Gin Bombay 1000ml': 634.66,
+  'Harina Fardo': 99.95,
+  'Hielo (Unidades)': 12.0,
+  'Hierba Buena (Unidad)': 22.9,
+  'Jabon Ajax': 15.22,
+  'Jabon Limpia Platos': 179.95,
+  'Jalapeno la Costena (Fardo 24)': 623.04,
+  'Jalapeños (Libra)': 15.0,
+  'Jengibre (Libra)': 42.5,
+  'Jugo de Naranja (Unidad)': 27.5,
+  'Jumbo Roll Papel Higiénico': 80.0,
+  'Ketchup Pouch Heinz': 182.0,
+  'Ketchup en Sobre (Fardo 1000)': 782.0,
+  'Leche Condensada Nestle (Fardo 24)': 1010.85,
+  'Leche Semidescremada MS (Fardo de 12)': 379.95,
+  'Leche de Coco Roland (Fardo 24)': 1010.85,
+  'Lechuga escarola (unidades)': 17.5,
+  'Lemon Pepper': 460.0,
+  'Limon (Unidad)': 2.5,
+  'Lomo de Cerdo (Libra)': 72.0,
+  'Lyches Roland': 125.01,
+  'Magia Blanca Cloro 20 galones': 275.95,
+  'Maizena': 315.0,
+  'Mantequilla Escurrida (Libra)': 50.0,
+  'Maracuya (Unidad)': 5.0,
+  'Margarina': 29.9,
+  'Margarina Liquida Oasis': 355.01,
+  'Mayonesa Best Choice': 290.95,
+  'Menta (Unidad)': 22.9,
+  'Miel': 800.0,
+  'Mostaza Galon': 189.75,
+  'Mozzarella MS (Unidad)': 419.95,
+  'Muslo Deshuesado': 48.0,
+  "Pajilla Forrada Negra 7.75' (Fardo 250)": 58.85,
+  'Pan de Hamburguesa': 17.77,
+  'Papas Corte Recto Caja': 530.0,
+  'Papas Waffle 737g': 138.0,
+  'Papel Cayena (1000 Unidades)': 2000.0,
+  'Papel Hamburguesa Cuadriculado': 879.75,
+  'Papel interfoleado Scott': 74.68,
+  'Papel plateado (Fardo 500)': 1078.0,
+  'Paprika': 174.95,
+  'Parmesano 680g': 374.95,
+  'Pechuga Congelada (Libra)': 61.65,
+  'Pepino en Rodajas Car Int': 247.0,
+  'Pepperjack MS': 244.95,
+  'Pimienta Cayena': 166.75,
+  'Pimienta Negra': 264.95,
+  'Piña (Unidad)': 45.0,
+  'Quesillo Boqueron Libra': 51.5,
+  'Queso Americano MS': 199.95,
+  'Queso Para Nachos (Libra)': 60.0,
+  'Ranch': 354.95,
+  'Ranch Marina': 360.0,
+  'Red de Ajo': 40.0,
+  'Repollo (Libra)': 10.0,
+  'Ron Bacardi 750ml': 634.66,
+  'Sal de Ajo la Buena Cocina': 77.95,
+  'Sal y pimienta DJ': 30.0,
+  'Sal yodada': 32.99,
+  'Salsa Soya': 141.45,
+  'Sazonador Completo': 224.83,
+  'Servilleta White C 16.5*33cm': 253.92,
+  'Sweet Chilli': 525.0,
+  'Tajin Salsa en Polvo': 56.95,
+  'Tajo de Cerdo (Libra)': 80.0,
+  'Tapaderas Vaso 14 oz (Fardo 50)': 49.8,
+  'Té frío 2200g': 189.95,
+  'Tenedor Cuchillo Servilleta 3g (500)': 770.5,
+  'Tequila Jarana 1750ml': 583.66,
+  'Tomate Manzano (Libra)': 16.0,
+  'Tortas Angus (Unidades)': 37.95,
+  'Tortillas Milpa Real': 14.5,
+  'Tortillas la Selecta': 10.0,
+  'Vasos 14 oz (Fardo 50)': 108.33,
+  'Vinagre Blanco': 134.95,
+  'Vodka Barton 750ml': 56.95,
+  'Windex': 75.5,
+  'Zanahoria': 15.0,
+  'Zuko de Mango': 5.64,
+};
+
 // ══════════════════════════════════
 //  STATE
 // ══════════════════════════════════
 let records = JSON.parse(localStorage.getItem('cayena_compras') || '[]');
+let proveedores = JSON.parse(localStorage.getItem('cayena_proveedores') || '[]');
 let selDate = null, calY, calM;
 let rowCount = 0;
 let aiPendingData = null;
-let camStream = null;
 
 const el = id => document.getElementById(id);
 const Lf = n => 'L ' + parseFloat(n||0).toLocaleString('es-HN', {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -732,12 +810,45 @@ const DE = ['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
   calY = now.getFullYear(); calM = now.getMonth();
   el('period-chip').textContent = MO[calM] + ' ' + calY;
   renderCal(); renderTable(); updateKPIs(); buildCatalog();
+  // Seed proveedores from existing records
+  records.forEach(r => { if(r.proveedor && r.proveedor !== 'Varios') saveProveedor(r.proveedor); });
+  renderProveedoresList();
+  // Seed price memory from existing records (most recent price wins)
+  const prices = JSON.parse(localStorage.getItem('cayena_precios') || '{}');
+  let changed = false;
+  records.forEach(r => {
+    (r.items||[]).forEach(i => {
+      if(i.name && i.precio > 0 && !prices[i.name]) { prices[i.name] = i.precio; changed = true; }
+    });
+  });
+  if(changed) localStorage.setItem('cayena_precios', JSON.stringify(prices));
+  // Build products datalist from catalog + custom
+  buildProductsDatalist();
   addProductRow(); // start with one empty row
 })();
 
 // ── SIDEBAR ──
 function toggleSB(){el('sb').classList.toggle('open');el('ovbg').classList.toggle('open');}
 function closeSB(){el('sb').classList.remove('open');el('ovbg').classList.remove('open');}
+
+// ── PROVEEDORES ──
+function renderProveedoresList() {
+  const dl = el('proveedores-list');
+  if(!dl) return;
+  dl.innerHTML = proveedores.map(p => `<option value="${p}">`).join('');
+}
+function saveProveedor(name) {
+  const trimmed = name.trim();
+  if(!trimmed || proveedores.includes(trimmed)) return;
+  proveedores.push(trimmed);
+  proveedores.sort((a,b) => a.localeCompare(b));
+  localStorage.setItem('cayena_proveedores', JSON.stringify(proveedores));
+  renderProveedoresList();
+}
+function deleteProveedorInput() {
+  el('f-proveedor').value = '';
+  el('f-proveedor').focus();
+}
 
 // ── TABS ──
 function switchTab(t) {
@@ -785,23 +896,61 @@ function onDateType(val) {
 }
 
 // ── PRODUCT ROWS ──
+function buildProductsDatalist() {
+  // Merge catalog + custom products into the global datalist
+  let dl = document.getElementById('products-global-datalist');
+  if(!dl) {
+    dl = document.createElement('datalist');
+    dl.id = 'products-global-datalist';
+    document.body.appendChild(dl);
+  }
+  const customProducts = JSON.parse(localStorage.getItem('cayena_productos_custom') || '[]');
+  const allNames = [
+    ...ALL_PRODUCTS.map(p => ({name: p.name, cat: p.cat})),
+    ...customProducts.map(n => ({name: n, cat: 'Custom'}))
+  ];
+  // Deduplicate
+  const seen = new Set();
+  dl.innerHTML = allNames
+    .filter(p => { if(seen.has(p.name)) return false; seen.add(p.name); return true; })
+    .map(p => `<option value="${p.name}" label="${p.cat}">`)
+    .join('');
+}
+
+function saveCustomProduct(name) {
+  const trimmed = name.trim();
+  if(!trimmed) return;
+  // Already in catalog? skip
+  if(ISV_DEFAULTS[trimmed] !== undefined) return;
+  const custom = JSON.parse(localStorage.getItem('cayena_productos_custom') || '[]');
+  if(custom.includes(trimmed)) return;
+  custom.push(trimmed);
+  custom.sort((a,b) => a.localeCompare(b));
+  localStorage.setItem('cayena_productos_custom', JSON.stringify(custom));
+  buildProductsDatalist();
+}
+
 function addProductRow(name='', qty='', precio='', isvType='') {
   const id = 'row-' + (++rowCount);
   const div = document.createElement('div');
   div.className='product-row'; div.id=id;
 
-  // Build product options
-  const opts = ALL_PRODUCTS.map(p =>
-    `<option value="${p.name}" data-isv="${p.isv}" ${name===p.name?'selected':''}>${p.name} (${p.cat})</option>`
-  ).join('');
+  // Detect ISV from catalog if name known
+  const detectedISV = isvType || (name ? (ISV_DEFAULTS[name] || 'exento') : 'exento');
 
   div.innerHTML = `
     <div class="pr-field" style="grid-column:1/-1 span 2">
       <label>Producto</label>
-      <select onchange="onProductChange('${id}',this)" id="${id}-prod">
-        <option value="">— Seleccionar o escribir —</option>
-        ${opts}
-      </select>
+      <input type="text" id="${id}-prod" list="products-global-datalist"
+        value="${name}"
+        placeholder="Escribe para buscar o agregar..."
+        autocomplete="off"
+        inputmode="text"
+        oninput="onProductInput('${id}',this)"
+        onchange="onProductInput('${id}',this)"
+        style="width:100%;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text);background:transparent;border:none;border-bottom:1.5px solid var(--border);padding:5px 0;outline:none;transition:border-color .15s"
+        onfocus="this.style.borderBottomColor='var(--blue)'"
+        onblur="onProductInput('${id}',this);this.style.borderBottomColor='var(--border)'">
     </div>
     <div class="pr-field">
       <label>Cantidad</label>
@@ -817,9 +966,9 @@ function addProductRow(name='', qty='', precio='', isvType='') {
     </div>
     <div class="pr-isv">
       <select id="${id}-isv" onchange="recalcAll()" style="font-size:11px;font-weight:700;padding:4px 8px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;color:var(--body);font-family:var(--font)">
-        <option value="exento" ${isvType==='exento'?'selected':''}>Exento 0%</option>
-        <option value="gravado15" ${isvType==='gravado15'?'selected':''}>Grav. 15%</option>
-        <option value="gravado18" ${isvType==='gravado18'?'selected':''}>Grav. 18%</option>
+        <option value="exento" ${detectedISV==='exento'?'selected':''}>Exento 0%</option>
+        <option value="gravado15" ${detectedISV==='gravado15'?'selected':''}>Grav. 15%</option>
+        <option value="gravado18" ${detectedISV==='gravado18'?'selected':''}>Grav. 18%</option>
       </select>
     </div>
     <div class="pr-del">
@@ -827,22 +976,33 @@ function addProductRow(name='', qty='', precio='', isvType='') {
     </div>
   `;
 
-  // Set product row to span properly
   div.style.gridTemplateColumns = '2fr 80px 110px 100px 100px auto';
-
   el('product-rows').appendChild(div);
 
-  // Set ISV if product pre-selected
-  if(name && ISV_DEFAULTS[name]) {
-    el(id+'-isv').value = isvType || ISV_DEFAULTS[name];
-  }
   if(qty && precio) recalcRow(id);
 }
 
-function onProductChange(rowId, sel) {
-  const name = sel.value;
-  if(name && ISV_DEFAULTS[name]) {
+function onProductInput(rowId, input) {
+  const name = input.value.trim();
+  if(!name) return;
+  // Auto-assign ISV if name matches catalog
+  if(ISV_DEFAULTS[name] !== undefined) {
     el(rowId+'-isv').value = ISV_DEFAULTS[name];
+  }
+  // Auto-fill price — catalog price takes priority, then last learned price
+  const precioEl = el(rowId+'-precio');
+  if(precioEl && !precioEl.value) {
+    const catalogPrice = CATALOG_PRICES[name];
+    if(catalogPrice) {
+      precioEl.value = catalogPrice;
+      recalcRow(rowId);
+    } else {
+      const learnedPrices = JSON.parse(localStorage.getItem('cayena_precios') || '{}');
+      if(learnedPrices[name]) {
+        precioEl.value = learnedPrices[name];
+        recalcRow(rowId);
+      }
+    }
   }
   recalcAll();
 }
@@ -886,11 +1046,12 @@ function getRowsData() {
   const items = [];
   rows.forEach(row => {
     const id = row.id;
-    const name = el(id+'-prod')?.value||'';
+    const prodEl = el(id+'-prod');
+    const name = prodEl ? prodEl.value.trim() : '';
     const qty = parseFloat(el(id+'-qty')?.value)||0;
     const precio = parseFloat(el(id+'-precio')?.value)||0;
     const isv = el(id+'-isv')?.value||'exento';
-    if(name||qty||precio) items.push({name:name||'Sin nombre', qty, precio, sub:qty*precio, isv});
+    if(name||qty||precio) items.push({name:name||'Sin nombre', qty, precio, sub:parseFloat((qty*precio).toFixed(2)), isv});
   });
   return items;
 }
@@ -902,10 +1063,12 @@ function saveEntry(overrideData) {
   const numfact = el('f-numfact')?.value || '';
   const pago = el('f-pago')?.value || overrideData?.pago || '';
   const items = overrideData?.items || getRowsData();
-  if(!items.length || items.every(i=>i.sub===0)) {showToast('Ingresa al menos un producto','err'); return;}
+  // Accept if item has a name AND (qty>0 or precio>0)
+  const validItems = items.filter(i => i.name && i.name !== 'Sin nombre' && (i.qty > 0 || i.precio > 0));
+  if(!validItems.length) {showToast('Agrega al menos un producto con nombre y precio','err'); return;}
 
   let g15=0,g18=0,exent=0;
-  items.forEach(i=>{
+  validItems.forEach(i=>{
     if(i.isv==='gravado15') g15+=i.sub;
     else if(i.isv==='gravado18') g18+=i.sub;
     else exent+=i.sub;
@@ -918,7 +1081,7 @@ function saveEntry(overrideData) {
     proveedor: proveedor||'Varios',
     numfact,
     pago,
-    items,
+    items: validItems,
     g15: parseFloat(g15.toFixed(2)),
     g18: parseFloat(g18.toFixed(2)),
     exent: parseFloat(exent.toFixed(2)),
@@ -928,6 +1091,19 @@ function saveEntry(overrideData) {
 
   records.sort((a,b)=>a.fecha.localeCompare(b.fecha));
   localStorage.setItem('cayena_compras', JSON.stringify(records));
+
+  // Save proveedor to persistent list
+  if(proveedor && proveedor !== 'Varios') saveProveedor(proveedor);
+  // Save any new custom products + update price memory
+  const prices = JSON.parse(localStorage.getItem('cayena_precios') || '{}');
+  items.forEach(i => {
+    if(i.name && i.name !== 'Sin nombre') {
+      saveCustomProduct(i.name);
+      if(i.precio > 0) prices[i.name] = i.precio;
+    }
+  });
+  localStorage.setItem('cayena_precios', JSON.stringify(prices));
+
   renderTable(); updateKPIs(); buildCatalog();
 
   // Reset form
@@ -1173,37 +1349,10 @@ function resetScan() {
   el('upload-zone').style.display='block';
   el('preview-img').src='';
   el('file-input').value='';
+  el('cam-input').value='';
   aiPendingData=null;
 }
 
-// ── CAMERA ──
-async function startCamera() {
-  try {
-    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-    el('cam-video').srcObject = camStream;
-    el('cam-video').style.display='block';
-    el('cam-overlay').style.display='flex';
-  } catch(e) {
-    showToast('No se pudo acceder a la cámara','err');
-  }
-}
-function capturePhoto() {
-  const vid = el('cam-video');
-  const canvas = el('cam-canvas');
-  canvas.width=vid.videoWidth; canvas.height=vid.videoHeight;
-  canvas.getContext('2d').drawImage(vid,0,0);
-  const dataURL = canvas.toDataURL('image/jpeg',0.9);
-  stopCamera();
-  el('scan-preview').classList.add('show');
-  el('preview-img').src=dataURL;
-  el('upload-zone').style.display='none';
-  processWithAI(dataURL,'image/jpeg');
-}
-function stopCamera() {
-  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
-  el('cam-video').style.display='none';
-  el('cam-overlay').style.display='none';
-}
 
 // ── EXPORT ──
 function exportCSV() {
