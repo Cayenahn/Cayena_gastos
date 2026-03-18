@@ -545,14 +545,24 @@ body{overflow-x:hidden}
 
           <!-- Upload zone -->
           <div class="upload-zone" id="upload-zone" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
-            <input type="file" accept="image/*,application/pdf" id="file-input" onchange="handleFile(this.files[0])">
+            <!-- Archivo normal (computadora) -->
+            <input type="file" accept="image/*,application/pdf" id="file-input" onchange="handleFile(this.files[0])" style="display:none">
+            <!-- Cámara nativa (teléfono) -->
+            <input type="file" accept="image/*" capture="environment" id="cam-input" onchange="handleFile(this.files[0])" style="display:none">
             <div class="upload-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M7 9l5-5 5 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
             </div>
-            <div class="upload-title">Subir imagen de factura</div>
-            <div class="upload-sub">Arrastra aquí o toca para seleccionar<br>JPG, PNG, PDF · Máx 10 MB</div>
-            <div class="upload-actions" onclick="event.stopPropagation()">
-              <button class="btn btn-ai" onclick="document.getElementById('file-input').click()">Elegir archivo o PDF</button>
+            <div class="upload-title">Analizar factura con IA</div>
+            <div class="upload-sub">Sube una imagen o PDF, o toma una foto directo<br>JPG, PNG, PDF · Máx 10 MB</div>
+            <div class="upload-actions" onclick="event.stopPropagation()" style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">
+              <button class="btn" onclick="document.getElementById('file-input').click()" style="display:flex;align-items:center;gap:7px">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2M8 2v8M5 5l3-3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Subir archivo
+              </button>
+              <button class="btn btn-ai" onclick="document.getElementById('cam-input').click()" style="display:flex;align-items:center;gap:7px">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M1 5a2 2 0 012-2h1.5l1-1.5h5L11.5 3H13a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V5z" stroke="white" stroke-width="1.4"/><circle cx="8" cy="8.5" r="2.2" stroke="white" stroke-width="1.4"/></svg>
+                Abrir cámara
+              </button>
             </div>
           </div>
 
@@ -1166,6 +1176,7 @@ function resetScan() {
   el('upload-zone').style.display='block';
   el('preview-img').src='';
   el('file-input').value='';
+  el('cam-input').value='';
   aiPendingData=null;
 }
 
