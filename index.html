@@ -347,6 +347,14 @@ function closeSB(){el('sb').classList.remove('open');el('ovbg').classList.remove
 function openModal(){
   const records=JSON.parse(localStorage.getItem('cayena_ingresos')||'[]');
   if(records.length){const t=parseFloat(records.reduce((s,r)=>s+(r.total||0),0).toFixed(2));if(t>0)el('f-ibv').value=t;}
+  // Pre-fill compras del mes
+  const compras=JSON.parse(localStorage.getItem('cayena_compras')||'[]');
+  if(compras.length){
+    const now=new Date();const curY=now.getFullYear(),curM=now.getMonth();
+    const mes=compras.filter(r=>{if(!r.fecha)return false;const[y,m]=r.fecha.split('-');return parseInt(y)===curY&&parseInt(m)-1===curM;});
+    const t=parseFloat(mes.reduce((s,r)=>s+(r.total||0),0).toFixed(2));
+    if(t>0)el('f-comp').value=t;
+  }
   el('overlay').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeModal(){el('overlay').classList.remove('open');document.body.style.overflow='';}
@@ -406,9 +414,31 @@ function importFromIngresos(){
   el('sk-bruto').textContent=Lf(total);el('sk-bruto').className='scv gr';
   el('sk-margen').textContent='Margen: 100.0% (sin costos ingresados)';
 }
+function importFromCompras(){
+  const records=JSON.parse(localStorage.getItem('cayena_compras')||'[]');
+  if(!records.length)return;
+  const now=new Date();
+  const curY=now.getFullYear(),curM=now.getMonth();
+  // Filter only records from the current month
+  const mesActual=records.filter(r=>{
+    if(!r.fecha)return false;
+    const[y,m]=r.fecha.split('-');
+    return parseInt(y)===curY&&parseInt(m)-1===curM;
+  });
+  if(!mesActual.length)return;
+  const total=parseFloat(mesActual.reduce((s,r)=>s+(r.total||0),0).toFixed(2));
+  if(total===0)return;
+  // Pre-fill "(+) Compras del Mes" field in modal
+  el('f-comp').value=total;
+  // Reflect immediately in the display row
+  el('r-comp').textContent=Lf(total);el('r-comp').className='da';
+  el('b-c').textContent='Con datos';el('b-c').className='sc-chip sc-ok';
+  el('gt-c').textContent=Lf(total);
+}
 const now=new Date();const per=MO[now.getMonth()]+' '+now.getFullYear();
 el('tper').textContent=per;el('cpb').textContent=per;
 importFromIngresos();
+importFromCompras();
 </script>
 </body>
 </html>
