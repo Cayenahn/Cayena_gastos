@@ -589,6 +589,7 @@ body{overflow-x:hidden}
 </div><!-- /app -->
 
 <div class="toast" id="toast"></div>
+<datalist id="products-global-datalist"></datalist>
 
 
 
@@ -804,6 +805,30 @@ const Lf = n => 'L ' + parseFloat(n||0).toLocaleString('es-HN', {minimumFraction
 const MO = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const DE = ['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
 
+// ── PAGO ──
+const PAGO_STYLES = {
+  'Transferencia':  {bg:'#EFF6FF',color:'#2563EB',icon:'💳'},
+  'Efectivo':       {bg:'#F0FDF4',color:'#16A34A',icon:'💵'},
+  'TC Gold':        {bg:'#FFFBEB',color:'#D97706',icon:'🟡'},
+  'TC PS':          {bg:'#EFF6FF',color:'#0284C7',icon:'🔵'},
+  'TC Socio':       {bg:'#F5F3FF',color:'#7C3AED',icon:'🟣'},
+  'Pendiente':      {bg:'#FEF2F2',color:'#EF4444',icon:'⏳'},
+};
+function onPagoChange(val) {
+  const wrap = el('pago-badge-wrap');
+  const badge = el('pago-badge');
+  if(!val){wrap.style.display='none';return;}
+  const s = PAGO_STYLES[val]||{bg:'var(--bg)',color:'var(--body)',icon:''};
+  wrap.style.display='block';
+  badge.style.background=s.bg;badge.style.color=s.color;badge.style.borderColor=s.color+'44';
+  badge.textContent=s.icon+' '+val;
+}
+function pagoBadge(val) {
+  if(!val) return '<span style="color:var(--muted);font-size:12px">—</span>';
+  const s = PAGO_STYLES[val]||{bg:'var(--bg)',color:'var(--body)',icon:''};
+  return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:${s.bg};color:${s.color};border:1px solid ${s.color}44">${s.icon} ${val}</span>`;
+}
+
 // ── INIT ──
 (function(){
   const now = new Date();
@@ -897,24 +922,21 @@ function onDateType(val) {
 
 // ── PRODUCT ROWS ──
 function buildProductsDatalist() {
-  // Merge catalog + custom products into the global datalist
-  let dl = document.getElementById('products-global-datalist');
-  if(!dl) {
-    dl = document.createElement('datalist');
-    dl.id = 'products-global-datalist';
-    document.body.appendChild(dl);
-  }
+  const dl = document.getElementById('products-global-datalist');
+  if(!dl) return;
   const customProducts = JSON.parse(localStorage.getItem('cayena_productos_custom') || '[]');
-  const allNames = [
-    ...ALL_PRODUCTS.map(p => ({name: p.name, cat: p.cat})),
-    ...customProducts.map(n => ({name: n, cat: 'Custom'}))
-  ];
-  // Deduplicate
   const seen = new Set();
-  dl.innerHTML = allNames
-    .filter(p => { if(seen.has(p.name)) return false; seen.add(p.name); return true; })
-    .map(p => `<option value="${p.name}" label="${p.cat}">`)
-    .join('');
+  const allOptions = [];
+  // Catalog products first
+  ALL_PRODUCTS.forEach(p => {
+    if(!seen.has(p.name)) { seen.add(p.name); allOptions.push(p.name); }
+  });
+  // Then custom products
+  customProducts.forEach(n => {
+    if(!seen.has(n)) { seen.add(n); allOptions.push(n); }
+  });
+  allOptions.sort((a,b) => a.localeCompare(b));
+  dl.innerHTML = allOptions.map(n => `<option value="${n}">`).join('');
 }
 
 function saveCustomProduct(name) {
@@ -958,7 +980,7 @@ function addProductRow(name='', qty='', precio='', isvType='') {
     </div>
     <div class="pr-field">
       <label>Precio unitario (L.)</label>
-      <input type="number" id="${id}-precio" value="${precio}" placeholder="0.00" min="0" step="0.01" inputmode="decimal" oninput="recalcRow('${id}')">
+      <input type="number" id="${id}-precio" value="${precio}" placeholder="0.00" min="0" step="0.01" inputmode="decimal" oninput="recalcRow('${id}')" onblur="updatePrecioMemory('${id}')">
     </div>
     <div class="pr-field">
       <label>Subtotal</label>
@@ -1013,6 +1035,20 @@ function recalcRow(rowId) {
   const sub = qty*precio;
   el(rowId+'-sub').value = Lf(sub);
   recalcAll();
+}
+
+function updatePrecioMemory(rowId) {
+  const prodEl = el(rowId+'-prod');
+  const precioEl = el(rowId+'-precio');
+  if(!prodEl || !precioEl) return;
+  const name = prodEl.value.trim();
+  const precio = parseFloat(precioEl.value);
+  if(!name || !precio || precio <= 0) return;
+  // Update both CATALOG_PRICES (in memory) and cayena_precios (persistent)
+  CATALOG_PRICES[name] = precio;
+  const stored = JSON.parse(localStorage.getItem('cayena_precios') || '{}');
+  stored[name] = precio;
+  localStorage.setItem('cayena_precios', JSON.stringify(stored));
 }
 
 function removeRow(id) {
@@ -1363,30 +1399,6 @@ function exportCSV() {
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
   a.download='cayena-compras.csv'; a.click();
-}
-
-// ── PAGO ──
-const PAGO_STYLES = {
-  'Transferencia':  {bg:'#EFF6FF',color:'#2563EB',icon:'💳'},
-  'Efectivo':       {bg:'#F0FDF4',color:'#16A34A',icon:'💵'},
-  'TC Gold':        {bg:'#FFFBEB',color:'#D97706',icon:'🟡'},
-  'TC PS':          {bg:'#EFF6FF',color:'#0284C7',icon:'🔵'},
-  'TC Socio':       {bg:'#F5F3FF',color:'#7C3AED',icon:'🟣'},
-  'Pendiente':      {bg:'#FEF2F2',color:'#EF4444',icon:'⏳'},
-};
-function onPagoChange(val) {
-  const wrap = el('pago-badge-wrap');
-  const badge = el('pago-badge');
-  if(!val){wrap.style.display='none';return;}
-  const s = PAGO_STYLES[val]||{bg:'var(--bg)',color:'var(--body)',icon:''};
-  wrap.style.display='block';
-  badge.style.background=s.bg;badge.style.color=s.color;badge.style.borderColor=s.color+'44';
-  badge.textContent=s.icon+' '+val;
-}
-function pagoBadge(val) {
-  if(!val) return '<span style="color:var(--muted);font-size:12px">—</span>';
-  const s = PAGO_STYLES[val]||{bg:'var(--bg)',color:'var(--body)',icon:''};
-  return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:${s.bg};color:${s.color};border:1px solid ${s.color}44">${s.icon} ${val}</span>`;
 }
 
 // ── UTILS ──
